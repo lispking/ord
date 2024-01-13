@@ -17,9 +17,13 @@
 
 This document defines a scheme for assigning serial numbers to sats.
 
+该文件定义了一个为卫星分配序列号的方案。
+
 === Copyright ===
 
 This work is placed in the public domain.
+
+该作品已置于公共领域。
 
 === Motivation ===
 
@@ -28,8 +32,14 @@ single-use, and wallet accounts are private. Additionally, the use of addresses
 or public keys as stable identifiers precludes transfer of ownership or key
 rotation.
 
+比特币没有稳定、公共账户或身份的概念。
+地址是单次使用的，钱包账户是私密的。
+此外，将地址或公钥作为稳定标识符的使用阻止了所有权的转移或密钥轮换。
+
 This proposal is motivated by the desire to provide stable identifiers that may
 be used by Bitcoin applications.
+
+这个提议是由提供可以被比特币应用程序使用的稳定标识符的愿望所驱动的。
 
 == Description ==
 
@@ -41,9 +51,15 @@ ordinal numbers in the mathematical sense, giving the order of each sat in the
 total supply. The word "ordinal" is nicely unambiguous, as it is not used
 elsewhere in the Bitcoin protocol.
 
+每个比特币（sat）都按顺序编号，从0开始，按照挖矿的顺序。
+这些数字被称为“序数”，因为它们在数学上是序数，表示每个比特币在总供应量中的顺序。
+"Ordinal"这个词非常清晰，因为没有在其他比特币协议中使用。
+
 The ordinal numbers of sats in transaction inputs are transferred to output
 sats in first-in-first-out order, according to the size and order of the
 transactions inputs and outputs.
+
+交易输入中的序数比特币按照先进先出的顺序传递到输出的比特币中，根据交易输入和输出的大小和顺序。
 
 If a transaction is mined with the same transaction ID as outputs currently in
 the UTXO set, following the behavior of Bitcoin Core, the new transaction
@@ -54,6 +70,9 @@ the coinbase transactions of blocks 91812/91842, and 91722/91880, mined before
 [https://github.com/bitcoin/bips/blob/master/bip-0034.mediawiki BIP-34] made
 the creation of transactions with duplicate IDs impossible.
 
+如果挖掘出一个与当前未花费交易输出集（UTXO）中的输出具有相同交易ID的交易，按照Bitcoin Core的行为，新交易输出将替换旧的UTXO集合条目，销毁第一个交易中任何未花费输出中的比特币。
+这个规则是为了处理两个主网交易具有重复交易ID的对，即区块91812/91842和91722/91880，这些区块是在BIP-34使具有重复ID的交易创建成为不可能之前挖出的。
+
 For the purposes of the assignment algorithm, the coinbase transaction is
 considered to have an implicit input equal in size to the subsidy, followed by
 an input for every fee-paying transaction in the block, in the order that those
@@ -61,13 +80,21 @@ transactions appear in the block. The implicit subsidy input carries the
 block's newly created sats. The implicit fee inputs carry the sats that were
 paid as fees in the block's transactions.
 
+为了分配算法的目的，币基交易被视为有一个隐含输入，其大小等于补贴，后面跟着每个付费交易的输入，这些交易按照在区块中出现的顺序。
+隐含的补贴输入携带区块新创建的比特币。隐含的费用输入携带区块交易中作为费用支付的比特币。
+
 Underpaying the subsidy does not change the ordinal numbers of sats mined
 in subsequent blocks. Ordinals depend only on how many sats could have been
 mined, not how many actually were.
 
+低于补贴的支付不会改变随后区块中挖矿的比特币的序数。
+序数仅取决于可以挖矿的比特币的数量，而不是实际挖矿的数量。
+
 === Specification ===
 
 Sats are numbered and transferred with the following algorithm:
+
+比特币（sat）的编号和转移遵循以下算法：
 
 <pre>
 # subsidy of block at given height
@@ -111,6 +138,11 @@ the addition of the offset of the ordinal within that output. For example, if
 the sat in question is at offset 6 in the first output of a transaction, its
 satpoint is:
 
+一个satpoint可以用来指示输出中的一个sat的位置。
+一个satpoint由一个outpoint组成，即一个交易ID和输出索引，再加上该输出中序数的位置偏移量。
+例如，如果我们要找的sat在交易的第一个输出中的偏移量为6，那么它的satpoint是：
+（请注意，原文中这里似乎缺少了具体的satpoint的例子。通常，satpoint会包括交易的输出中sat的确切位置信息。）
+
 `680df1e4d43016571e504b0b142ee43c5c0b83398a97bdcfd94ea6f287322d22:0:6`
 
 == Discussion ==
@@ -121,12 +153,19 @@ Ordinal numbers are designed to be orthogonal to other aspects of the Bitcoin
 protocol, and can thus be used in conjunction with other layer one and layer
 applications, even ones that were not designed with ordinal numbers in mind.
 
+序数号码被设计成与比特币协议的其他方面垂直，因此可以与一层和二层应用的其他应用程序结合使用，甚至是那些没有考虑到序数号码的应用程序。
+
 Ordinal sats can be secured using current and future script types. They can be
 held by single-signature wallets, multi-signature wallets, time-locked, and
 height-locked in all the usual ways.
 
+序数比特币可以使用当前和未来的脚本类型进行保护。
+它们可以被单签名钱包、多签名钱包、时间锁以及以所有通常的方式高度锁住持有。
+
 By assigning ordinal numbers to all sats without the need for an explicit
 creation step, the anonymity set of ordinal number users is maximized.
+
+通过为所有比特币分配序数号码，而不需要显式的创建步骤，最大化序数号码用户的匿名性集合。
 
 Since a sat has an output that contains it, and an output has a public key that
 controls it, the owner of a sat can respond to challenges by signing messages
@@ -134,22 +173,37 @@ using the address associated with the controlling UTXO. Additionally, a sat can
 change hands, or its private key can be rotated without a change of ownership,
 by transferring it to a new output.
 
+由于一个比特币包含在一个输出中，而一个输出有一个控制它的公钥，因此比特币的所有者可以通过使用与控制UTXO相关联的地址签署信息来回应挑战。
+此外，一个比特币可以通过转移到一个新的输出手中，或者在没有所有权变更的情况下更换其私钥。
+
 Ordinals require no changes to blocks, transactions, or network protocols, and
 can thus be immediately adopted, or ignored, without impacting existing users.
+
+序数不需要对区块、交易或网络协议进行任何更改，因此可以立即被采用，或者被忽视，而不会影响现有用户。
 
 Ordinals do not have an explicit on-chain footprint. However, a valid objection
 is that adoption of ordinals will increase demand for outputs, and thus
 increase the size of the UTXO set that full nodes must track. See the
 objections section below.
 
+序数在链上没有显式的足迹。
+然而，一个有效的反对意见是，采用序数将增加对输出的需求，从而增加完整节点必须跟踪的UTXO集合的大小。
+请参阅下面的反对意见部分。
+
 The ordinal number scheme is extremely simple. The specification above is 15
 lines of code.
+
+序数号码方案非常简单。上述规格是15行代码。
 
 Ordinals are fairly assigned. They are not premined, and are assigned
 proportionally to existing bitcoin holders.
 
+序数分配是公平的。它们不是预挖的，而是按比例分配给现有的比特币持有者。
+
 Ordinals are as granular as possible, as bitcoin is not capable of tracking
 ownership of sub-sat values.
+
+序数尽可能细粒度，因为比特币无法追踪小于比特币的价值的所有权。
 
 === Transfer and the Dust Limit ===
 
@@ -163,9 +217,16 @@ size 5, 1, and 5, containing sats [0,4], 5, and [6,10], respectively. The
 second output is under the dust limit, and so such a transaction would be
 non-standard.
 
+任何单笔sat的转账都可以在一个交易中完成，但结果交易可能包含低于灰尘限制的输出，因此它是非标准的，难以被包含在区块中。
+考虑一个场景，Alice拥有一个包含sat范围[0,10]的输出，当前的灰尘限制是5sat，Alice希望将sat 4和6发送给Bob，但保留序数5。
+Alice可以构建一个包含三个输出的交易，分别为5sat、1sat和5sat，分别包含sat范围[0,4]、5和[6,10]。
+第二个输出低于灰尘限制，因此这样的交易将是非标准的。
+
 This transfer, and indeed any transfer, can be accomplished by breaking the
 transfer into multiple transactions, with each transaction performing one or
 more splits and merging in padding outputs as needed.
+
+这种转账，以及任何转账，都可以通过将转账分解为多个交易来完成，每个交易执行一个或多个分割和合并，并按需要添加填充输出。
 
 To wit, Alice could perform the desired transfer in two transactions. The first
 transaction would send sats [0,4] to Bob, and return as change sat [5,10] to
@@ -175,33 +236,53 @@ an output of size 5 to Bob's address, and the remainder as a change output.
 Both transactions avoid creating any non-standard outputs, but still accomplish
 the same desired transfer of sats.
 
+具体来说，Alice可以在两个交易中完成所需的转账。第一个交易会将sat范围[0,4]发送给Bob，并将作为找零sat范围[5,10]返回给Alice。
+第二个交易将使用至少4sat的输出、找零输入以及至少一个额外的输入作为输入；并为Bob的地址创建一个5sat的输出，其余部分作为找零输出。
+这两个交易都避免了创建任何非标准的输出，但仍实现了相同的目标，即转账sat。
+
 === Objections ===
 
 ''Privacy: Ordinal numbers are public and thus reduce user privacy.''
 
+“隐私：序数号码是公开的，因此减少了用户隐私。”
+
 The applications using ordinal numbers required them to be public, and reduce
 the privacy of only those users that decide to use them.
 
+使用序数号码的应用程序需要它们是公开的，这只会减少决定使用它们的用户的隐私。
+
 ''Fungibility: Ordinal numbers reduce the fungibility of Bitcoin, as ordinals
 received in a transaction may carry with them some public history.''
+
+“同质性：序数号码降低了比特币的同质性，因为交易中收到的序数可能携带一些公共历史。”
 
 As anyone can send anyone else any sats, any reasonable person will assume that
 a new owner of a particular sat cannot be understood to be the old owner, or
 have any particular relationship with the old owner.
 
+由于任何人都可以向任何人发送任何数量的比特币，任何合理的人都会认为一个新的比特币所有者不能被理解为旧的所有人，或者与旧的所有人有任何特别的关系。
+
 ''Congestion: Adoption of ordinal numbers will increase the demand for
 transactions, and drive up fees.''
 
+“拥堵：采用序数号码将增加对交易的需求，并推高费用。”
+
 Since Bitcoin requires the development of a robust fee market, this is a strong
 positive of the proposal.
+
+由于比特币需要发展一个健壮的费用市场，这是提议的一个强大优点。
 
 ''UTXO set bloat: Adoption of ordinal numbers will increase the demand for
 entries in the UTXO set, and thus increase the size of the UTXO set, which all
 full nodes are required to track.''
 
+“UTXO集膨胀：采用序数号码将增加对UTXO集中条目的需求，从而增加UTXO集的大小，所有完整节点都需要跟踪。”
+
 The dust limit, which makes outputs with small values difficult to create,
 should encourage users to create non-dust outputs, and to clean them up once
 they no longer have use for the sats that they contain.
+
+灰尘限制，它使得创建小价值的输出变得困难，应该鼓励用户创建非灰尘输出，并在它们不再需要包含的sat时清理它们。
 
 === Security ===
 
@@ -211,22 +292,35 @@ compared to a system where public keys are static. However, a system with
 static public keys suffers from an inability for keys to be rotated or accounts
 to change hands.
 
+与一个sat关联的公钥可能会发生变化。
+这需要积极地跟随区块链以跟上密钥的变化，并且需要与具有静态公钥的系统相比更加小心。
+然而，具有静态公钥的系统受到密钥无法轮换或账户无法易手的限制。
+
 Ordinal-aware software must avoid losing valuable sats by unintentionally
 relinquishing them in a transaction, either to a non-controlled output or by
 using them as fees.
+
+意识到序数的软件必须避免在交易中无意中放弃有价值的sat，无论是将其发送到不可控制的输出，还是将其作为费用使用。
 
 === Privacy considerations ===
 
 Ordinals are opt-in, and should not impact the privacy of existing users.
 
+序数是可选的，且不应影响现有用户的隐私。
+
 Ordinals are themselves public, however, this is required by the fact that many
 of the applications that they are intended to enable require public
 identifiers.
+
+序数本身是公开的，然而，这是由它们旨在启用的大多数应用需要公共标识符这一事实所要求的。
 
 Ordinal aware software should never mix sats which might have some publicly
 visible data associated with their ordinals with sats intended for use in
 payments or savings, since this would associate that publicly visible data with
 the users otherwise pseudonymous wallet outputs.
+
+意识到序数的软件绝不应该将可能与它们的序数关联有一些公开可见数据的sat与打算用于支付或储蓄的sat混合，
+因为这样做会将那些公开可见的数据与用户否则匿名钱包的输出关联起来。
 
 === Fungibility considerations ===
 
@@ -234,10 +328,16 @@ Since any sat can be sent to any address at any time, sats that are transferred,
 even those with some public history, should be considered to be fungible with
 other sats with no such history.
 
+由于任何sat都可以在任何时间发送到任何地址，
+即使是那些有一些公开历史记录的转移sat，
+也应被视为与没有此类历史记录的其他sat相同质。
+
 === Backward compatibility ===
 
 Ordinal numbers are fully backwards compatible and require no changes to the
 bitcoin network.
+
+序数号码完全向后兼容，并且不需要对比特币网络进行任何更改。
 
 === Drawbacks ===
 
@@ -246,30 +346,40 @@ bitcoin network.
 Indexes supporting fast queries related to ordinals are slow to build and
 consume large amounts of space.
 
+支持与序数相关的快速查询的索引构建缓慢，且占用大量空间。
+
 An O(1) index that maps UTXOs to the ordinals that they contain is currently
 100 GiB. The same index including spent outputs is 10 TiB.
+
+一个时间复杂度为O(1)的索引，它将未花费交易输出(UTXO)映射到它们包含的序数，
+目前占用100 GiB的空间。包括已花费输出的同一索引则占用10 TiB。
 
 An O(1) index supporting the opposite mapping, that of individual ordinals to
 the UTXO that contains them, is likely to be intractable. However, an O(n)
 index where n is the number of times an ordinal has changed hands, is fast and
 practical.
 
+一个支持相反映射的O(1)索引，即将个别序数映射到包含它们的UTXO，很可能是不可行的。
+然而，一个时间复杂度为O(n)的索引，其中n是一个序数被转让的次数，是快速且实用的。
+
 ==== Large Location Proofs ====
 
 A proof can be constructed that demonstrates that a particular sat is contained
 in a particular output, however the proofs are large. Such a proof consists of:
 
-- Block headers
-- A Merkle path to the coinbase transaction that created the sat
-- The coinbase transaction that created the sat
-- And for every spend of that sat:
-  - The spend transaction
+可以构建一个证明，证明特定的sat包含在特定的输出中，但是这些证明很大。这样的证明包括：
+
+- Block headers 区块头部
+- A Merkle path to the coinbase transaction that created the sat 到创建该sat的coinbase交易的Merkle路径
+- The coinbase transaction that created the sat 创建该sat的coinbase交易
+- And for every spend of that sat: 以及对该sat的每次花费：
+  - The spend transaction 花费交易
   - The transactions that created the inputs before the input that was spent,
     to determine the values of the preceding inputs, to determine the position
-    of the sat
+    of the sat 在被花费输入之前的输入创建的交易，以确定前一个输入的值，以确定sat的位置
   - And, if the sat was used as fees, all prior transaction in the block in
     which it was spent, and the coinbase transaction, to determine the location
-    of the sat in the outputs.
+    of the sat in the outputs. 如果是作为手续费使用sat，则包括在花费该sat的区块中的所有先前交易和coinbase交易，以确定sat在输出中的位置。
 
 == Reference implementation ==
 
