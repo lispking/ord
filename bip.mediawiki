@@ -80,7 +80,7 @@ transactions appear in the block. The implicit subsidy input carries the
 block's newly created sats. The implicit fee inputs carry the sats that were
 paid as fees in the block's transactions.
 
-为了分配算法的目的，币基交易被视为有一个隐含输入，其大小等于补贴，后面跟着每个付费交易的输入，这些交易按照在区块中出现的顺序。
+为了分配算法的目的，coinbase交易被视为有一个隐含输入，其大小等于补贴，后面跟着每个付费交易的输入，这些交易按照在区块中出现的顺序。
 隐含的补贴输入携带区块新创建的比特币。隐含的费用输入携带区块交易中作为费用支付的比特币。
 
 Underpaying the subsidy does not change the ordinal numbers of sats mined
