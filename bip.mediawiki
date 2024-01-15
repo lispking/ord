@@ -17,7 +17,7 @@
 
 This document defines a scheme for assigning serial numbers to sats.
 
-该文件定义了一个为卫星分配序列号的方案。
+该文件定义了一个为 sats 分配序列号的方案。
 
 === Copyright ===
 
